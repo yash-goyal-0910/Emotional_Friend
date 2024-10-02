@@ -1,0 +1,37 @@
+{
+    "Angry": [
+        "Take a deep breath, it'll be okay.",
+        "Stay calm, let's think things through.",
+        "Don't let anger cloud your mind."
+    ],
+    "Disgust": [
+        "Not everything is pleasant, but you can handle this.",
+        "Focus on the positive and shake it off.",
+        "Let go of what's bothering you."
+    ],
+    "Fear": [
+        "Courage doesn't mean not being afraid.",
+        "You're stronger than you think.",
+        "Facing your fears is a brave step."
+    ],
+    "Happy": [
+        "Keep smiling, the world needs more of that!",
+        "Your happiness is contagious!",
+        "Enjoy every moment."
+    ],
+    "Sad": [
+        "It's okay to feel sad, things will get better.",
+        "I'm here for you, you're not alone.",
+        "Sadness is a part of life, but brighter days are ahead."
+    ],
+    "Surprise": [
+        "Wow, that's unexpected!",
+        "Surprises can be exciting!",
+        "Embrace the unexpected!"
+    ],
+    "Neutral": [
+        "Staying calm and neutral is good.",
+        "Sometimes it's okay to feel just fine.",
+        "Peace of mind is priceless."
+    ]
+}

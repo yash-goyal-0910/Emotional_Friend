@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Buddy</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .options-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Buttons */
+        button, input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover, input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Video and Image Containers */
+        #camera, #capturedImage, #uploadedImagePreview {
+            width: 320px;
+            height: 240px;
+            border: 2px solid #666;
+            margin-bottom: 20px;
+            display: none;
+            margin-left: auto;
+            margin-right: auto;
+            transform: scaleX(-1);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            font-size: 14px;
+            text-align: center;
+            color: #888;
+        }
+
+        /* Hide submit buttons initially */
+        #webcamSubmit, #uploadSubmit {
+            display: none;
+        }
+
+        /* Container for the entire page content */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        /* Webcam selector */
+        #webcamSelector {
+            display: none;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Emotional Helper</h1>
+        <h2>Select an option:</h2>
+
+        <!-- Options to choose from -->
+        <div class="options-container">
+            <button id="uploadOption">Upload an Image</button>
+            <button id="webcamOption">Capture via Webcam</button>
+        </div>
+
+        <!-- Form for Uploading an Image -->
+        <div id="uploadContainer" style="display:none;">
+            <h3>Upload an Image</h3>
+            <form id="uploadForm" action="/predict" method="POST" enctype="multipart/form-data">
+                <input type="file" name="image" id="imageUpload" accept="image/*">
+                <img id="uploadedImagePreview" src="" alt="Uploaded Image Preview">
+                <input type="submit" id="uploadSubmit" value="Detect Mood from Uploaded Image">
+            </form>
+        </div>
+
+        <!-- Form for Capturing an Image via Webcam -->
+        <div id="webcamContainer" style="display:none;">
+            <h3>Capture Image via Webcam</h3>
+            <select id="webcamSelector"></select>
+            <video id="camera" autoplay></video>
+            <button id="captureButton">Capture</button>
+            <canvas id="capturedCanvas" style="display: none;"></canvas>
+            <img id="capturedImage" src="" alt="Captured Image">
+            <form id="webcamForm" action="/predict_webcam" method="POST">
+                <input type="hidden" name="capturedImageData" id="capturedImageData">
+                <input type="submit" id="webcamSubmit" value="Capture Mood from Captured Image">
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer with your name -->
+    <footer>
+        <p>Made by Yash Goyal</p>
+    </footer>
+
+    <script>
+        // Show the upload form when the "Upload an Image" button is clicked
+        document.getElementById('uploadOption').addEventListener('click', function() {
+            document.getElementById('uploadContainer').style.display = 'block';
+            document.getElementById('webcamContainer').style.display = 'none';
+        });
+
+        // Show the webcam form when the "Capture via Webcam" button is clicked
+        document.getElementById('webcamOption').addEventListener('click', function() {
+            document.getElementById('uploadContainer').style.display = 'none';
+            document.getElementById('webcamContainer').style.display = 'block';
+            listWebcams();  // List available webcams
+        });
+
+        // Function to list available webcams and allow the user to select one
+        function listWebcams() {
+            const videoSelect = document.getElementById('webcamSelector');
+            videoSelect.style.display = 'block';  // Show the selector
+
+            navigator.mediaDevices.enumerateDevices().then(devices => {
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                // Clear previous options
+                videoSelect.innerHTML = '';
+
+                // Add options for each webcam
+                videoDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.text = device.label || `Camera ${index + 1}`;
+                    videoSelect.appendChild(option);
+                });
+
+                // Start webcam with the first available camera
+                if (videoDevices.length > 0) {
+                    startWebcam(videoDevices[0].deviceId);
+                }
+
+                videoSelect.onchange = () => {
+                    startWebcam(videoSelect.value);
+                };
+            });
+        }
+
+        // Function to start the webcam
+        function startWebcam(deviceId) {
+            const video = document.getElementById('camera');
+            navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                })
+                .catch(err => {
+                    console.log("Error accessing the webcam: " + err);
+                });
+        }
+
+        // Capture image from the webcam
+        const canvas = document.getElementById('capturedCanvas');
+        const context = canvas.getContext('2d');
+        const capturedImage = document.getElementById('capturedImage');
+        const capturedImageData = document.getElementById('capturedImageData');
+        const webcamSubmit = document.getElementById('webcamSubmit');
+
+        document.getElementById('captureButton').addEventListener('click', function () {
+            const video = document.getElementById('camera');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            
+            const dataUrl = canvas.toDataURL('image/png');
+            capturedImage.src = dataUrl;
+            capturedImage.style.display = 'block';
+            capturedImageData.value = dataUrl;
+            webcamSubmit.style.display = 'inline-block';
+        });
+
+        // Show preview of uploaded image
+        document.getElementById('imageUpload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const preview = document.getElementById('uploadedImagePreview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                document.getElementById('uploadSubmit').style.display = 'inline-block';
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

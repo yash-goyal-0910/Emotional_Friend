@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .emotion {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .comment {
+            font-style: italic;
+            color: #555;
+        }
+
+        a, button {
+            display: inline-block;
+            margin-top: 15px; /* Reduced margin for better spacing */
+            padding: 8px 16px; /* Smaller padding to reduce button size */
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px; /* Smaller font size */
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            width: auto; /* Auto width for better fitting */
+        }
+
+        a:hover, button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Smaller gap between buttons */
+            justify-content: center;
+            align-items: center; /* Center align buttons */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Result</h1>
+        <p class="emotion">Emotion: {{ emotion }}</p>
+        <p class="comment">{{ comment }}</p>
+
+        <div class="button-container">
+            <a href="/">Go Back</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Made by Yash Goyal</p>
+    </footer>
+</body>
+</html>
