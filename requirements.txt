@@ -1,8 +1,8 @@
-Flask
-Gunicorn
+flask
+gunicorn
 numpy
 opencv-python
 tensorflow
 keras
-Pillow
+pillow
 Werkzeug
