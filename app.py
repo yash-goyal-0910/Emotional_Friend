@@ -94,6 +94,4 @@ def show_result():
     return render_template('result.html', emotion=emotion, comment=comment)
 
 
-# Run the Flask app
-if __name__ == '__main__':
-    app.run(debug=False)
+
